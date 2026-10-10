@@ -29,6 +29,7 @@
 static struct list ready_list;
 
 static struct list sleep_list;
+
 /* Idle thread. */
 static struct thread *idle_thread;
 
@@ -102,7 +103,8 @@ void thread_init(void)
 	 * The kernel will rebuild the gdt with user context, in gdt_init (). */
 	struct desc_ptr gdt_ds = {
 		.size = sizeof(gdt) - 1,
-		.address = (uint64_t)gdt};
+		.address = (uint64_t)gdt
+	};
 	lgdt(&gdt_ds);
 
 	/* Init the globla thread context */
@@ -178,7 +180,7 @@ void thread_print_stats(void)
    PRIORITY, but no actual priority scheduling is implemented.
    Priority scheduling is the goal of Problem 1-3. */
 tid_t thread_create(const char *name, int priority,
-					thread_func *function, void *aux)
+                    thread_func *function, void *aux)
 {
 	struct thread *t;
 	tid_t tid;
@@ -225,7 +227,8 @@ void thread_block(void)
 	schedule();
 }
 
-static bool wakeup_less(const struct list_elem *a, const struct list_elem *b, void *aus UNUSED)
+static bool wakeup_less(const struct list_elem *a, const struct list_elem *b,
+                        void *aus UNUSED)
 {
 	struct thread *ta = list_entry(a, struct thread, elem);
 	struct thread *tb = list_entry(b, struct thread, elem);
@@ -268,9 +271,9 @@ void thread_awake(int64_t current_tick)
 		thread_unblock(t);
 	}
 }
+
 /* Returns the name of the running thread. */
-const char *
-thread_name(void)
+const char *thread_name(void)
 {
 	return thread_current()->name;
 }
@@ -389,8 +392,7 @@ void thread_sleep(int64_t wakeup_tick)
    blocks.  After that, the idle thread never appears in the
    ready list.  It is returned by next_thread_to_run() as a
    special case when the ready list is empty. */
-static void
-idle(void *idle_started_ UNUSED)
+static void idle(void *idle_started_ UNUSED)
 {
 	struct semaphore *idle_started = idle_started_;
 
@@ -420,8 +422,7 @@ idle(void *idle_started_ UNUSED)
 }
 
 /* Function used as the basis for a kernel thread. */
-static void
-kernel_thread(thread_func *function, void *aux)
+static void kernel_thread(thread_func *function, void *aux)
 {
 	ASSERT(function != NULL);
 
@@ -432,8 +433,7 @@ kernel_thread(thread_func *function, void *aux)
 
 /* Does basic initialization of T as a blocked thread named
    NAME. */
-static void
-init_thread(struct thread *t, const char *name, int priority)
+static void init_thread(struct thread *t, const char *name, int priority)
 {
 	ASSERT(t != NULL);
 	ASSERT(PRI_MIN <= priority && priority <= PRI_MAX);
@@ -452,8 +452,7 @@ init_thread(struct thread *t, const char *name, int priority)
    empty.  (If the running thread can continue running, then it
    will be in the run queue.)  If the run queue is empty, return
    idle_thread. */
-static struct thread *
-next_thread_to_run(void)
+static struct thread *next_thread_to_run(void)
 {
 	if (list_empty(&ready_list))
 		return idle_thread;
@@ -499,8 +498,7 @@ void do_iret(struct intr_frame *tf)
    It's not safe to call printf() until the thread switch is
    complete.  In practice that means that printf()s should be
    added at the end of the function. */
-static void
-thread_launch(struct thread *th)
+static void thread_launch(struct thread *th)
 {
 	uint64_t tf_cur = (uint64_t)&running_thread()->tf;
 	uint64_t tf = (uint64_t)&th->tf;
@@ -562,8 +560,7 @@ thread_launch(struct thread *th)
  * This function modify current thread's status to status and then
  * finds another thread to run and switches to it.
  * It's not safe to call printf() in the schedule(). */
-static void
-do_schedule(int status)
+static void do_schedule(int status)
 {
 	ASSERT(intr_get_level() == INTR_OFF);
 	ASSERT(thread_current()->status == THREAD_RUNNING);
@@ -577,8 +574,7 @@ do_schedule(int status)
 	schedule();
 }
 
-static void
-schedule(void)
+static void schedule(void)
 {
 	struct thread *curr = running_thread();
 	struct thread *next = next_thread_to_run();
@@ -619,8 +615,7 @@ schedule(void)
 }
 
 /* Returns a tid to use for a new thread. */
-static tid_t
-allocate_tid(void)
+static tid_t allocate_tid(void)
 {
 	static tid_t next_tid = 1;
 	tid_t tid;

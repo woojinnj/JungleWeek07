@@ -134,8 +134,7 @@ void timer_print_stats(void)
 }
 
 /* Timer interrupt handler. */
-static void
-timer_interrupt(struct intr_frame *args UNUSED)
+static void timer_interrupt(struct intr_frame *args UNUSED)
 {
 	ticks++;
 	thread_tick();
@@ -144,8 +143,7 @@ timer_interrupt(struct intr_frame *args UNUSED)
 
 /* Returns true if LOOPS iterations waits for more than one timer
    tick, otherwise false. */
-static bool
-too_many_loops(unsigned loops)
+static bool too_many_loops(unsigned loops)
 {
 	/* Wait for a timer tick. */
 	int64_t start = ticks;
@@ -168,16 +166,14 @@ too_many_loops(unsigned loops)
    affect timings, so that if this function was inlined
    differently in different places the results would be difficult
    to predict. */
-static void NO_INLINE
-busy_wait(int64_t loops)
+static void NO_INLINE busy_wait(int64_t loops)
 {
 	while (loops-- > 0)
 		barrier();
 }
 
 /* Sleep for approximately NUM/DENOM seconds. */
-static void
-real_time_sleep(int64_t num, int32_t denom)
+static void real_time_sleep(int64_t num, int32_t denom)
 {
 	/* Convert NUM/DENOM seconds into timer ticks, rounding down.
 
